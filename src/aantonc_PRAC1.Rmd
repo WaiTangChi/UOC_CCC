@@ -60,7 +60,7 @@ for(i in nodesCCC){
 		currentTables <- i
 		line <- paste(urlCCC, Sys.time(), currentGame, currentBlinds, currentTables, sep = ",")
 		print(line)
-		write(line,file="myfile.csv",append=TRUE)
+		write(line,file="../resources/example.csv",append=TRUE)
 	}else if(grepl("Blinds",i)){
 		currentBlinds <- i
 	}else{
