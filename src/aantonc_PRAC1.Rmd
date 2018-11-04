@@ -1,0 +1,72 @@
+---
+title: 'Tipología y ciclo de vida de los datos - Práctica 1'
+author: "Adrián Antón Collado"
+date: "Noviembre 2018"
+output:
+  html_document:
+    highlight: default
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 2
+---
+
+
+# Carga de librerías
+
+```{r cargalibrerias}
+rm(list = ls())
+if(!require(RCurl)){
+    install.packages('RCurl')
+    library(RCurl)
+}
+if(!require(XML)){
+    install.packages('XML')
+    library(XML)
+}
+if(!require(stringr)){
+    install.packages('stringr')
+    library(stringr)
+}
+if(!require(rlist)){
+    install.packages('rlist')
+    library(rlist)
+}
+if(!require(rvest)){
+	install.packages("xml2")
+    install.packages("rvest")
+    library(rvest)
+}
+```
+
+# Carga de URL
+
+```{r}
+urls <- list("https://wien-lugnercity.ccc.co.at/","https://www.montesino.at/","https://innsbruck.ccc.co.at/","https://bregenz.ccc.co.at/","https://salzburg.ccc.co.at/","https://wien-simmering.ccc.co.at/en/","https://klagenfurt.ccc.co.at/","https://kufstein.ccc.co.at/","https://gmunden.ccc.co.at/","https://linz.ccc.co.at/","https://reutte.ccc.co.at/")
+while(TRUE){
+for(k in urls){
+urlCCC <- k
+pageCCC <- read_html(urlCCC)
+nodeCCC <- html_nodes(pageCCC,'.cashgame-list')
+nodesCCC <- html_text(nodeCCC)
+nodesCCC <- strsplit(nodesCCC, "  ")
+nodesCCC <- unlist(lapply(nodesCCC,  function(x) trimws(x)))
+nodesCCC <- nodesCCC[nodesCCC != "" ]
+currentGame <- ""
+currentBlidns <- ""
+currentTables <- ""
+for(i in nodesCCC){
+	if(grepl("able",i) | grepl("isch",i)){
+		currentTables <- i
+		line <- paste(urlCCC, Sys.time(), currentGame, currentBlinds, currentTables, sep = ",")
+		print(line)
+		write(line,file="myfile.csv",append=TRUE)
+	}else if(grepl("Blinds",i)){
+		currentBlinds <- i
+	}else{
+		currentGame <- i
+	}
+}}
+Sys.sleep(120)
+}
+```
