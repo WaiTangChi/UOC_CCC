@@ -1,5 +1,6 @@
 #!/usr/bin/env Rscript
 
+#Carga las librerías necesarias para la práctica
 loadLibraries <- function(){
 	rm(list = ls())
 	if(!require(RCurl)){
@@ -29,26 +30,31 @@ loadLibraries <- function(){
 
 }
 
+#Obtiene todas las urls a scanear.
 getUrls <- function(){
 	urls <- read.csv("../resources/urls.csv",header=T,sep=",")
 	return( urls )
 }
 
+#Obtiene el código HTML del una url dada
 getHtml <- function( url ){
 	print(paste("Reading URL : ",url))
 	return ( read_html ( url ) )
 }
 
-getNodes <- function( webDoc ){
+#Obtiene los nodos que contienen la información en las webs de CCC
+getNodesCCC <- function( webDoc ){
 	nodeCCC <- html_nodes(webDoc,'.cashgame-list')
 	return ( nodeCCC )
 }	
 
-getNodeContent <- function( node ){
+#Obtiene la información de los nodos extraidos de CCC
+getNodeContentCCC <- function( node ){
 	htmlText <- html_text( node )
 	return ( htmlText )
 }	
 
+# Extrae las información de un data frame y lo devuelve como una lista de líneas para ser salvadas como csv
 extractLines <- function ( urls ){
 	
 	currentGameType <- ""
@@ -96,6 +102,7 @@ extractLines <- function ( urls ){
 
 }
 
+# Escribe al final del fichero dado las líneas recibidas como parámetro.
 saveLines <- function ( lines ) {
 
 	for (i in 1:length(lines$group) ){
@@ -106,13 +113,14 @@ saveLines <- function ( lines ) {
 
 }
 
+# Punto de entrada
 main <- function (){
 
 	#urls <- getUrls()[2,]
 	urls <- getUrls()
 	urls$webDocs <-	lapply( as.list( urls$url ), function ( x ) getHtml( toString ( x ) ) )
-	urls$nodes <- lapply( as.list( urls$webDocs ), function ( x ) getNodes( x ) )
-	urls$content <- lapply( as.list( urls$nodes ), function ( x ) getNodeContent( x ) )
+	urls$nodes <- lapply( as.list( urls$webDocs ), function ( x ) getNodesCCC( x ) )
+	urls$content <- lapply( as.list( urls$nodes ), function ( x ) getNodeContentCCC( x ) )
 	lines <- extractLines( urls )
 
 	saveLines ( lines ) 	
