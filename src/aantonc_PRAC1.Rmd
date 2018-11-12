@@ -43,6 +43,8 @@ if(!require(rvest)){
 
 ```{r}
 urls <- list("https://wien-lugnercity.ccc.co.at/","https://www.montesino.at/","https://innsbruck.ccc.co.at/","https://bregenz.ccc.co.at/","https://salzburg.ccc.co.at/","https://wien-simmering.ccc.co.at/en/","https://klagenfurt.ccc.co.at/","https://kufstein.ccc.co.at/","https://gmunden.ccc.co.at/","https://linz.ccc.co.at/","https://reutte.ccc.co.at/")
+
+#urls <- list("https://wien-simmering.ccc.co.at/en/")
 while(TRUE){
 for(k in urls){
 urlCCC <- k
@@ -55,18 +57,23 @@ nodesCCC <- nodesCCC[nodesCCC != "" ]
 currentGame <- ""
 currentBlidns <- ""
 currentTables <- ""
+currentDesc <- ""
 for(i in nodesCCC){
 	if(grepl("able",i) | grepl("isch",i)){
 		currentTables <- i
-		line <- paste(urlCCC, Sys.time(), currentGame, currentBlinds, currentTables, sep = ",")
-		print(line)
+		line <- paste(urlCCC, Sys.time(),currentGame, currentBlinds, currentTables, sep = ",")
 		write(line,file="../resources/example.csv",append=TRUE)
-	}else if(grepl("Blinds",i)){
+	}else if(grepl("Blinds",i) | (grepl("Stud",currentGame) & grepl("Limit",i)) ){
 		currentBlinds <- i
+	}else if(grepl("Limit",i) | grepl("Stud",i) | grepl("Dealer",i)){
+		currentGame <-i
 	}else{
-		currentGame <- i
+		currentDesc <- i
+		line <- paste(urlCCC, Sys.time(),paste( currentGame,currentDesc, sep =" "), currentBlinds, currentTables, sep = ",")
+		write(line,file="../resources/example.csv",append=TRUE)
 	}
-}}
+}
+}
 Sys.sleep(120)
 }
 ```
