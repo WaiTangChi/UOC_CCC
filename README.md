@@ -1,4 +1,7 @@
-# UOC_CCC
+# UOC_CCC: GambleSpotter
+
+## Dataset for the analysis of the live poker tables
+
 # Tipología y ciclo de vida de los datos. Práctica 1: Web scraping
 
 ## Descripción
