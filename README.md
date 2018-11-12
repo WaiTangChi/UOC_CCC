@@ -1,5 +1,3 @@
-![logo](https://github.com/WaiTangChi/UOC_CCC/blob/master/resources/poker-chips.png)
-
 # UOC_CCC: GambleSpotter
 
 Dataset para el análisis de mesas de poker en vivo
